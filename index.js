@@ -12,18 +12,9 @@ app.use(parser.json());
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                        Main methods for API                                            //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-app.get('/', (req,res) => res.send(' Connection successful !'));
-//
-// TEST 
-_handleGetUsers = (req, res) => {
-  return db.query('SELECT * FROM users')
-          .then((data) => {
-            return res.status('200').json({ code: '200', message: 'Successfully added user ', data: data });
-          })
-          .catch((error) => {
-            return res.status('401').json({ name:error.name, query:error.query, message:error.message,stack:error.stack })
-          })    
-};
+app.get('/', (req,res) => {
+  res.status('200').json({ code: '200', message: 'Connection successful !'})
+});
 // Route /users/userID
 app.route('/users/:userID')
   .get((req, res) => {
@@ -57,20 +48,68 @@ app.route('/users/:userID')
       })
   })
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                      Route('/users')                                                   //
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Route /users
 app.route('/users')
   .get((req,res) => {
-    _handleGetUsers(req, res)
+    handleGetUsers(req, res)
   })
   .post((req,res) => {
-    db.query('INSERT INTO users(email, password) values($1,$2)', [req.query.email, req.query.password])
-      .then((data) => {
-        return res.status('200').json({ code: '200', message: 'Successfully added user ', data: data });
-      })
-      .catch((error) => {
-        return res.status('401').json({ name:error.name, query:error.query, message:error.message,stack:error.stack })
-      })  
+    handlePostUsers(req, res)
   })
+// Helper functions
+handleGetUsers = (req, res) => {
+  return db.query('SELECT * FROM users')
+          .then((data) => {
+            return res.status('200').json({ code: '200', message: 'Successfully get all users ', data: data });
+          })
+          .catch((error) => {
+            return res.status('401').json({ name:error.name, query:error.query, message:error.message,stack:error.stack })
+          })    
+};
+handlePostUsers = (req,res) => {
+  return db.query('INSERT INTO users(email, password) values($1,$2)', [req.query.email, req.query.password])
+          .then((data) => {
+            return res.status('200').json({ code: '200', message: 'Successfully added user ', data: data });
+          })
+          .catch((error) => {
+            return res.status('401').json({ name:error.name, query:error.query, message:error.message,stack:error.stack })
+          })  
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                      Route('/articles')                                                   //
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+app.route('/articles')
+  .get((req,res) => {
+    handleGetArticles(req, res)
+  })
+  .post((req,res) => {
+    handlePostArticles(req, res)
+  })
+// Helper functions
+handleGetArticles = (req, res) => {
+  return db.query('SELECT * FROM articles')
+          .then((data) => {
+            return res.status('200').json({ code: '200', message: 'Successfully get all articles', data: data });
+          })
+          .catch((error) => {
+            return res.status('401').json({ name:error.name, query:error.query, message:error.message,stack:error.stack })
+          })    
+};
+handlePostArticles = (req,res) => {
+  return db.query('INSERT INTO articles(body, userID) values($1,$2)', [req.query.body, req.query.userID])
+          .then((data) => {
+            return res.status('200').json({ code: '200', message: 'Successfully added article ', data: data });
+          })
+          .catch((error) => {
+            return res.status('401').json({ name:error.name, query:error.query, message:error.message,stack:error.stack })
+          })  
+}
+
 
 // Ports no
 app.listen(process.env.PORT || ENV.PORT, () => console.log(`Example app on port ${ENV.PORT}`))
