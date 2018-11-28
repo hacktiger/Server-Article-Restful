@@ -27,6 +27,9 @@ app.get('/users', async (req, res) => {
 app.get('/users/:userID', async (req,res) => {
   db.query('SELECT * from users WHERE id = $1', req.params.userID)
   .then(function (data) {
+    if (data.length === 0){
+      return res.status('201').json({ message: `Cannot find user with id = ${userID}` })
+    }
     return res.status('200').json(data)
   })
   .catch(function (error) {
@@ -56,11 +59,11 @@ app.put('/users/:userID', (req,res) => {
 // 
 app.delete('/users/:userID', (req,res) => {
   client.query('DELETE FROM users WHERE id = $1', req.params.userID)
-  .then(() => {
+  .then((data) => {
     return res.status('200').json({ code: '200', message: `Successfully delete user with userID = ${req.params.userID}` })
   })
   .catch((error) => {
-    return res.status('401').json({ name:error.name, query:error.query, message:error.message,stack:error.stack })
+    return res.status('401').json({ name:error.name, query:error.query, message:error.message, stack:error.stack })
   })
 });
 // Ports no
