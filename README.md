@@ -13,3 +13,13 @@ heroku open
 or:
 # to run locally on localhost:5000
 heroku local web 
+
+
+########NOTE
+default current_timestamp
+use '' for strings and "" for identifiers in postgres
+#ex: insert into articles(body,"userID") values('test','5')
+
+ALTER TABLE link ALTER COLUMN target
+ALTER TABLE articles RENAME COLUMN "userID" TO userid;
+SET DEFAULT '_blank'

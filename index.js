@@ -97,11 +97,11 @@ handleGetArticles = (req, res) => {
             return res.status('200').json({ code: '200', message: 'Successfully get all articles', data: data });
           })
           .catch((error) => {
-            return res.status('401').json({ name:error.name, query:error.query, message:error.message,stack:error.stack })
+            return res.status('401').json({ name:error.name, query:error.query, message:error.message, stack:error.stack })
           })    
 };
 handlePostArticles = (req,res) => {
-  return db.query('INSERT INTO articles(body, userID) values($1,$2)', [req.query.body, req.query.userID])
+  return db.query('INSERT INTO articles(body, userid) values($1,$2)', [req.query.body, req.query.userid])
           .then((data) => {
             return res.status('200').json({ code: '200', message: 'Successfully added article ', data: data });
           })
