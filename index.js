@@ -10,9 +10,9 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: true
 });
+const client = await pool.connect()
 app.get('/db', async (req, res) => {
   try {
-    const client = await pool.connect()
     const result = await client.query('SELECT * FROM users');
     const results = (result) ? result.rows : null;
     res.send(results)
@@ -30,9 +30,9 @@ app.use(parser.json());
 app.get('/', (req,res) => res.send(' Connection successful !'));
 // get user info with ID
 app.get('/users', (req, res) => {
-  db.query('SELECT * FROM users')
+  client.query('SELECT * FROM users')
     .then((data) => {
-      return res.status('200').json(data)
+      return res.status('200').json(data,rows)
     })
     .catch(function (error) {
       return res.status('401').json({ name:error.name, query:error.query, message:error.message,stack:error.stack })
@@ -40,7 +40,7 @@ app.get('/users', (req, res) => {
 });
 // get user by id
 app.get('/users/:userID', (req,res) => {
-  db.query('SELECT * from users WHERE id = $1', req.params.userID)
+  client.query('SELECT * from users WHERE id = $1', req.params.userID)
   .then(function (data) {
     return res.status('200').json(data)
   })
@@ -50,7 +50,7 @@ app.get('/users/:userID', (req,res) => {
 });
 //
 app.post('/users', (req, res) => {
-  db.query('INSERT INTO users(email, password) values($1,$2)', [req.query.email, req.query.password])
+  client.query('INSERT INTO users(email, password) values($1,$2)', [req.query.email, req.query.password])
     .then((data) => {
       return res.status('200').json({ code: '200', message: 'Successfully added user ', data: data });
     })
@@ -60,7 +60,7 @@ app.post('/users', (req, res) => {
 });
 //
 app.put('/users/:userID', (req,res) => {
-  db.query('UPDATE users SET email=$1 WHERE id=$2 ', ['chagned@gmail.com', req.params.userID])
+  client.query('UPDATE users SET email=$1 WHERE id=$2 ', ['chagned@gmail.com', req.params.userID])
     .then(() => {
       return res.status('200').json({ code: '200', message: `Successfully updated user ${req.params.userID}` });
     })
@@ -70,7 +70,7 @@ app.put('/users/:userID', (req,res) => {
 });
 // 
 app.delete('/users/:userID', (req,res) => {
-  db.query('DELETE FROM users WHERE id = $1', req.params.userID)
+  client.query('DELETE FROM users WHERE id = $1', req.params.userID)
   .then(() => {
     return res.status('200').json({ code: '200', message: `Successfully delete user with userID = ${req.params.userID}` })
   })
