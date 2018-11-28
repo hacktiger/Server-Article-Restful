@@ -1,34 +1,15 @@
 # Server-Article-Restful
 
-Purpose
+Purpose:
 - Practice with Node server side by:
 + Create restful api for a blog 
 + Use it to make simple website
 
-'use strict';
+Run app:
+git clone : https://github.com/hacktiger/Server-Article-Restful.git
+npm install
 
-const articles = sequelize.define('articles', {
-  id: {
-    type: Sequelize.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-    validate: {
-      isNumeric: true,
-      isInt: true,
-      notNull: true,
-      notEmpty: true
-    }
-  },
-  title:{
-    type: Sequelize.STRING, 
-    allowNull: false
-  },
-  body: {
-    type: Sequelize.STRING
-  },
-  author: {
-    type: Sequelize.INTEGER  
-  }
-});
-
-articles.sync({force: true})
+heroku open
+or:
+# to run locally on localhost:5000
+heroku local web 
