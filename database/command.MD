@@ -18,4 +18,9 @@ heroku addons:create papertrail
 heroku config vars
 heroku addons
 #DB
+#list of commands
+heroku help pg
+#
+heroku pg:psql
+heroku pg:info
 heroku addons:create heroku-postgresql:hobby-dev
