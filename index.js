@@ -10,33 +10,36 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: true
 });
-const client = pool.connect()
+// use
+app.use(parser.json());
+
 app.get('/db', async (req, res) => {
   try {
+    const client = await pool.connect()
     const result = await client.query('SELECT * FROM users');
     const results = (result) ? result.rows : null;
     res.send(results)
     client.release();
   } catch (err) {
-    console.error(err);
     res.send("Error " + err);
   }
 })
 // parser
-app.use(parser.json());
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                        Main methods for API                                            //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 app.get('/', (req,res) => res.send(' Connection successful !'));
 // get user info with ID
 app.get('/users', (req, res) => {
-  client.query('SELECT * FROM users')
-    .then((data) => {
-      return res.status('200').json(data,rows)
-    })
-    .catch(function (error) {
-      return res.status('401').json({ name:error.name, query:error.query, message:error.message,stack:error.stack })
-    })
+  try {
+    const client = await pool.connect()
+    const result = await client.query('SELECT * FROM users');
+    const results = (result) ? result.rows : null;
+    res.status('200').json(results)
+    client.release();
+  } catch (err) {
+    res.send("Error " + err);
+  }
 });
 // get user by id
 app.get('/users/:userID', (req,res) => {
