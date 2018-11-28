@@ -39,18 +39,21 @@ app.get('/users', async (req, res) => {
     res.status('200').json(results)
     client.release();
   } catch (err) {
-    res.send("Error " + err);
+    res.status('401').json({ name:error.name, query:error.query, message:error.message,stack:error.stack });
   }
 });
 // get user by id
 app.get('/users/:userID', (req,res) => {
-  client.query('SELECT * from users WHERE id = $1', req.params.userID)
-  .then(function (data) {
-    return res.status('200').json(data)
-  })
-  .catch(function (error) {
-    return res.status('401').json({ name:error.name, query:error.query, message:error.message,stack:error.stack })
-  })
+  try {
+    console.log('req', req)
+    const client = await pool.connect()
+    const result = await client.query(`SELECT * FROM users WHERE id = ${userID}`);
+    const results = (result) ? result.rows : null;
+    res.status('200').json(results)
+    client.release();
+  } catch (err) {
+    res.status('401').json({ name:error.name, query:error.query, message:error.message,stack:error.stack });
+  }
 });
 //
 app.post('/users', (req, res) => {
