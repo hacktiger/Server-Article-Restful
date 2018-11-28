@@ -3,12 +3,16 @@ const ENV = require('./configs/config');
 const parser = require('body-parser');
 const express = require('express');
 const app = express();
+//
+const pgp = require('pg-promise')();
+const db = pgp('process.env.DATABASE_URL')
+
 // const db = ENV.DB;
 // DB stuff
 const { Pool } = require('pg');
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: true
+  ssl: false
 });
 // use
 app.use(parser.json());
@@ -31,16 +35,13 @@ app.get('/db', async (req, res) => {
 app.get('/', (req,res) => res.send(' Connection successful !'));
 // get user info with ID
 app.get('/users', async (req, res) => {
-  try {
-    console.log('req', req)
-    const client = await pool.connect()
-    const result = await client.query('SELECT * FROM users');
-    const results = (result) ? result.rows : null;
-    res.status('200').json(results)
-    client.release();
-  } catch (err) {
-    res.status('401').json({ name:error.name, query:error.query, message:error.message,stack:error.stack });
-  }
+  db.query('SELECT * FROM users')
+    .then((data) => {
+      return res.status('200').json({ code: '200', message: 'Successfully added user ', data: data });
+    })
+    .catch((error) => {
+      return res.status('401').json({ name:error.name, query:error.query, message:error.message,stack:error.stack })
+    })
 });
 // get user by id
 app.get('/users/:userID', async (req,res) => {
@@ -50,7 +51,7 @@ app.get('/users/:userID', async (req,res) => {
     const result = await client.query(`SELECT * FROM users WHERE id = ${userID}`);
     console.log('result', result)
     const results = (result) ? result.rows : null;
-    res.status('200').json(result)
+    res.status('200').json(result) // change later
     client.release();
   } catch (err) {
     res.status('401').json({ name:error.name, query:error.query, message:error.message,stack:error.stack });
@@ -58,7 +59,7 @@ app.get('/users/:userID', async (req,res) => {
 });
 //
 app.post('/users', (req, res) => {
-  client.query('INSERT INTO users(email, password) values($1,$2)', [req.query.email, req.query.password])
+  db.query('INSERT INTO users(email, password) values($1,$2)', [req.query.email, req.query.password])
     .then((data) => {
       return res.status('200').json({ code: '200', message: 'Successfully added user ', data: data });
     })
