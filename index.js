@@ -30,7 +30,7 @@ app.route('/users')
 handleGetUsers = (req, res) => {
   return db.query('SELECT * FROM users')
           .then((data) => {
-            return res.status('200').json({ code: '200', message: 'Successfully get all users ' });
+            return res.status('200').json({ code: '200', message: 'Successfully get all users ', data: data });
           })
           .catch((error) => {
             return res.status('401').json({ name:error.name, query:error.query, message:error.message,stack:error.stack })
@@ -51,7 +51,7 @@ handlePostUsers = (req,res) => {
 // Route /users/userID
 app.route('/users/:userID')
   .get((req, res) => {
-    handleGetUserById(req, res)
+    handleGetUserById(req, res, userID)
   })
   .put((req,res) => {
     handlePutUserById(req, res)
@@ -60,8 +60,8 @@ app.route('/users/:userID')
     handleDeleteUserById(req, res)
   })
 // Helper functions
-handleGetUserById = (req, res) => {
-  db.query('SELECT * from users WHERE id = $1', req.params.userID)
+handleGetUserById = (req, res, userID) => {
+  db.query('SELECT * from users WHERE id = $1', userID)
     .then(function (data) {
       if (data.length === 0){
         return res.status('201').json({ message: `Cannot find user with id = ${userID}` })
@@ -106,7 +106,7 @@ app.route('/articles')
 handleGetArticles = (req, res) => {
   return db.query('SELECT * FROM articles')
           .then((data) => {
-            return res.status('200').json({ code: '200', message: 'Successfully get all articles' });
+            return res.status('200').json({ code: '200', message: 'Successfully get all articles', data: data });
           })
           .catch((error) => {
             return res.status('401').json({ name:error.name, query:error.query, message:error.message, stack:error.stack })
