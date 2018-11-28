@@ -25,8 +25,7 @@ app.get("/", (req, res) => {
 //                                      Route('/users')                                                   //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Route /users
-app
-  .route("/users")
+app.route("/users")
   .get((req, res) => {
     handleGetUsers(req, res);
   })
@@ -75,8 +74,7 @@ handlePostUsers = (req, res) => {
 //                                     Route('/users/:userID')                                            //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Route /users/userID
-app
-  .route("/users/:userID")
+app.route("/users/:userID")
   .get((req, res) => {
     handleGetUserById(req, res);
   })
@@ -89,12 +87,12 @@ app
 // Helper functions
 handleGetUserById = (req, res) => {
   db.query("SELECT * from users WHERE id = $1", req.params.userID)
-    .then(function(data) {
+    .then((data) => {
       return res
         .status("200")
         .json({ code: "200", message: "Success", data: data });
     })
-    .catch(function(error) {
+    .catch((error) => {
       return res.status("401").json({
         name: error.name,
         query: error.query,
@@ -114,7 +112,7 @@ handlePutUserById = (req, res) => {
         message: `Successfully updated user ${req.params.userID}`
       });
     })
-    .catch(error => {
+    .catch((error) => {
       return res.status("401").json({
         name: error.name,
         query: error.query,
@@ -125,13 +123,13 @@ handlePutUserById = (req, res) => {
 };
 handleDeleteUserById = (req, res) => {
   db.query("DELETE FROM users WHERE id = $1", req.params.userID)
-    .then(data => {
+    .then((data) => {
       return res.status("200").json({
         code: "200",
         message: `Successfully delete user`
       });
     })
-    .catch(error => {
+    .catch((error) => {
       return res.status("401").json({
         name: error.name,
         query: error.query,
