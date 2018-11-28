@@ -30,8 +30,9 @@ app.get('/db', async (req, res) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 app.get('/', (req,res) => res.send(' Connection successful !'));
 // get user info with ID
-app.get('/users', (req, res) => {
+app.get('/users', async (req, res) => {
   try {
+    console.log('req', req)
     const client = await pool.connect()
     const result = await client.query('SELECT * FROM users');
     const results = (result) ? result.rows : null;
