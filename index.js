@@ -9,6 +9,12 @@ const db = pgp(process.env.DATABASE_URL);
 // use
 app.use(parser.json());
 
+// NEED TO FIX :
+/**
+ *  1. get users if id not exist now return html doc for some reason but articles dont
+ *  2. may need error.stack.error (so each log error is in a line)
+ */
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                        Main methods for API                                            //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -31,23 +37,19 @@ app
 handleGetUsers = (req, res) => {
   db.query("SELECT * FROM users")
     .then(data => {
-      return res
-        .status("200")
-        .json({
-          code: "200",
-          message: "Successfully get all users ",
-          data: data
-        });
+      return res.status("200").json({
+        code: "200",
+        message: "Successfully get all users ",
+        data: data
+      });
     })
     .catch(error => {
-      return res
-        .status("401")
-        .json({
-          name: error.name,
-          query: error.query,
-          message: error.message,
-          stack: error.stack
-        });
+      return res.status("401").json({
+        name: error.name,
+        query: error.query,
+        message: error.message,
+        stack: error.stack
+      });
     });
 };
 handlePostUsers = (req, res) => {
@@ -61,24 +63,22 @@ handlePostUsers = (req, res) => {
         .json({ code: "200", message: "Successfully added user " });
     })
     .catch(error => {
-      return res
-        .status("401")
-        .json({
-          name: error.name,
-          query: error.query,
-          message: error.message,
-          stack: error.stack
-        });
+      return res.status("401").json({
+        name: error.name,
+        query: error.query,
+        message: error.message,
+        stack: error.stack
+      });
     });
 };
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                                     Route('/articles/:userID')                                         //
+//                                     Route('/users/:userID')                                            //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Route /users/userID
 app
   .route("/users/:userID")
   .get((req, res) => {
-    handleGetUserById(req, res, userID);
+    handleGetUserById(req, res);
   })
   .put((req, res) => {
     handlePutUserById(req, res);
@@ -95,14 +95,12 @@ handleGetUserById = (req, res) => {
         .json({ code: "200", message: "Success", data: data });
     })
     .catch(function(error) {
-      return res
-        .status("401")
-        .json({
-          name: error.name,
-          query: error.query,
-          message: error.message,
-          stack: error.stack
-        });
+      return res.status("401").json({
+        name: error.name,
+        query: error.query,
+        message: error.message,
+        stack: error.stack
+      });
     });
 };
 handlePutUserById = (req, res) => {
@@ -111,43 +109,35 @@ handlePutUserById = (req, res) => {
     req.params.userID
   ])
     .then(() => {
-      return res
-        .status("200")
-        .json({
-          code: "200",
-          message: `Successfully updated user ${req.params.userID}`
-        });
+      return res.status("200").json({
+        code: "200",
+        message: `Successfully updated user ${req.params.userID}`
+      });
     })
     .catch(error => {
-      return res
-        .status("401")
-        .json({
-          name: error.name,
-          query: error.query,
-          message: error.message,
-          stack: error.stack
-        });
+      return res.status("401").json({
+        name: error.name,
+        query: error.query,
+        message: error.message,
+        stack: error.stack
+      });
     });
 };
 handleDeleteUserById = (req, res) => {
   db.query("DELETE FROM users WHERE id = $1", req.params.userID)
     .then(data => {
-      return res
-        .status("200")
-        .json({
-          code: "200",
-          message: `Successfully delete user with userID = ${req.params.userID}`
-        });
+      return res.status("200").json({
+        code: "200",
+        message: `Successfully delete user`
+      });
     })
     .catch(error => {
-      return res
-        .status("401")
-        .json({
-          name: error.name,
-          query: error.query,
-          message: error.message,
-          stack: error.stack
-        });
+      return res.status("401").json({
+        name: error.name,
+        query: error.query,
+        message: error.message,
+        stack: error.stack
+      });
     });
 };
 
@@ -167,23 +157,19 @@ app
 handleGetArticles = (req, res) => {
   db.query("SELECT * FROM articles")
     .then(data => {
-      return res
-        .status("200")
-        .json({
-          code: "200",
-          message: "Successfully get all articles",
-          data: data
-        });
+      return res.status("200").json({
+        code: "200",
+        message: "Successfully get all articles",
+        data: data
+      });
     })
     .catch(error => {
-      return res
-        .status("401")
-        .json({
-          name: error.name,
-          query: error.query,
-          message: error.message,
-          stack: error.stack
-        });
+      return res.status("401").json({
+        name: error.name,
+        query: error.query,
+        message: error.message,
+        stack: error.stack
+      });
     });
 };
 handlePostArticles = (req, res) => {
@@ -197,14 +183,12 @@ handlePostArticles = (req, res) => {
         .json({ code: "200", message: "Successfully added article " });
     })
     .catch(error => {
-      return res
-        .status("401")
-        .json({
-          name: error.name,
-          query: error.query,
-          message: error.message,
-          stack: error.stack
-        });
+      return res.status("401").json({
+        name: error.name,
+        query: error.query,
+        message: error.message,
+        stack: error.stack
+      });
     });
 };
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -231,14 +215,12 @@ handleGetArticleById = (req, res) => {
         .json({ code: "200", message: "Success", data: data });
     })
     .catch(function(error) {
-      return res
-        .status("401")
-        .json({
-          name: error.name,
-          query: error.query,
-          message: error.message,
-          stack: error.stack
-        });
+      return res.status("401").json({
+        name: error.name,
+        query: error.query,
+        message: error.message,
+        stack: error.stack
+      });
     });
 };
 handlePutArticleById = (req, res) => {
@@ -247,45 +229,35 @@ handlePutArticleById = (req, res) => {
     req.params.articleID
   ])
     .then(() => {
-      return res
-        .status("200")
-        .json({
-          code: "200",
-          message: `Successfully updated article ${req.params.articleID}`
-        });
+      return res.status("200").json({
+        code: "200",
+        message: `Successfully updated article ${req.params.articleID}`
+      });
     })
     .catch(error => {
-      return res
-        .status("401")
-        .json({
-          name: error.name,
-          query: error.query,
-          message: error.message,
-          stack: error.stack
-        });
+      return res.status("401").json({
+        name: error.name,
+        query: error.query,
+        message: error.message,
+        stack: error.stack
+      });
     });
 };
 handleDeleteArticleById = (req, res) => {
   db.query("DELETE FROM articles WHERE id = $1", req.params.articleID)
     .then(data => {
-      return res
-        .status("200")
-        .json({
-          code: "200",
-          message: `Successfully delete article with articleID = ${
-            req.params.userID
-          }`
-        });
+      return res.status("200").json({
+        code: "200",
+        message: `Successfully delete article`
+      });
     })
     .catch(error => {
-      return res
-        .status("401")
-        .json({
-          name: error.name,
-          query: error.query,
-          message: error.message,
-          stack: error.stack
-        });
+      return res.status("401").json({
+        name: error.name,
+        query: error.query,
+        message: error.message,
+        stack: error.stack
+      });
     });
 };
 

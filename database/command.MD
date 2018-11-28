@@ -22,7 +22,7 @@ heroku config vars
 heroku addons
 #DB
 # !important pushing local database to heroku db
-heroku pg:push postgres://postgres:123@localhost:5432/postgres DATABASE_URL --app calm-citadel-53113
+heroku pg:push postgres://postgres:123@localhost:5432/postgres DATABASE_URL --app server-article-reader-api
 # get db to local
 heroku pg:pull DATABASE_URL mylocaldb --app calm-citadel-53113
 # local db
