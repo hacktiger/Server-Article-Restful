@@ -18,6 +18,8 @@ heroku addons:create papertrail
 heroku config vars
 heroku addons
 #DB
+# !important pushing local database to heroku db
+heroku pg:push postgres://postgres:123@localhost:5432/postgres DATABASE_URL --app calm-citadel-53113postgres://postgres:123@localhost:5432/postgres
 #list of commands
 heroku help pg
 #
