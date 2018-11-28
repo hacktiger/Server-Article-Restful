@@ -6,29 +6,9 @@ const app = express();
 //
 const pgp = require('pg-promise')();
 const db = pgp(process.env.DATABASE_URL)
-
-// const db = ENV.DB;
-// DB stuff
-const { Pool } = require('pg');
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: false
-});
 // use
 app.use(parser.json());
 
-app.get('/db', async (req, res) => {
-  try {
-    const client = await pool.connect()
-    const result = await client.query('SELECT * FROM users');
-    const results = (result) ? result.rows : null;
-    res.send(results)
-    client.release();
-  } catch (err) {
-    res.send("Error " + err);
-  }
-})
-// parser
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                        Main methods for API                                            //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -45,17 +25,13 @@ app.get('/users', async (req, res) => {
 });
 // get user by id
 app.get('/users/:userID', async (req,res) => {
-  try {
-    console.log('req', req)
-    const client = await pool.connect()
-    const result = await client.query(`SELECT * FROM users WHERE id = ${userID}`);
-    console.log('result', result)
-    const results = (result) ? result.rows : null;
-    res.status('200').json(result) // change later
-    client.release();
-  } catch (err) {
-    res.status('401').json({ name:error.name, query:error.query, message:error.message,stack:error.stack });
-  }
+  db.query('SELECT * from users WHERE id = $1', req.params.userID)
+  .then(function (data) {
+    return res.status('200').json(data)
+  })
+  .catch(function (error) {
+    return res.status('401').json({ name:error.name, query:error.query, message:error.message,stack:error.stack })
+  })
 });
 //
 app.post('/users', (req, res) => {
@@ -89,4 +65,3 @@ app.delete('/users/:userID', (req,res) => {
 });
 // Ports no
 app.listen(process.env.PORT || ENV.PORT, () => console.log(`Example app on port ${ENV.PORT}`))
-
