@@ -43,13 +43,14 @@ app.get('/users', async (req, res) => {
   }
 });
 // get user by id
-app.get('/users/:userID', (req,res) => {
+app.get('/users/:userID', async (req,res) => {
   try {
     console.log('req', req)
     const client = await pool.connect()
     const result = await client.query(`SELECT * FROM users WHERE id = ${userID}`);
+    console.log('result', result)
     const results = (result) ? result.rows : null;
-    res.status('200').json(results)
+    res.status('200').json(result)
     client.release();
   } catch (err) {
     res.status('401').json({ name:error.name, query:error.query, message:error.message,stack:error.stack });
