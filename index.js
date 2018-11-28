@@ -62,4 +62,4 @@ app.delete('/users/:userID', (req,res) => {
   })
 });
 // Ports no
-app.listen(ENV.PORT, () => console.log(`Example app on port ${ENV.PORT}`))
+app.listen(process.env.PORT || 5000, () => console.log(`Example app on port ${ENV.PORT}`))
