@@ -3,14 +3,14 @@ const ENV = require('./configs/config');
 const parser = require('body-parser');
 const express = require('express');
 const app = express();
-const db = ENV.DB;
+// const db = ENV.DB;
 // DB stuff
 const { Pool } = require('pg');
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: true
 });
-const client = await pool.connect()
+const client = pool.connect()
 app.get('/db', async (req, res) => {
   try {
     const result = await client.query('SELECT * FROM users');
