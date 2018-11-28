@@ -76,7 +76,7 @@ handlePostUsers = (req, res) => {
 // Route /users/userID
 app.route("/users/:userID")
   .get((req, res) => {
-    handleGetUserById(req, res);
+    getUserById(req, res);
   })
   .put((req, res) => {
     handlePutUserById(req, res);
@@ -85,14 +85,15 @@ app.route("/users/:userID")
     handleDeleteUserById(req, res);
   });
 // Helper functions
-handleGetUserById = (req, res) => {
-  db.query("SELECT * from users WHERE id = 3")
-    .then((data) => {
+getUserById = (req, res) => {
+  console.log(req.params.userID)
+  db.query("SELECT * from users WHERE id = $1", req.params.userID)
+    .then(function(data) {
       return res
         .status("200")
         .json({ code: "200", message: "Success", data: data });
     })
-    .catch((error) => {
+    .catch(function(error) {
       return res.status("401").json({
         name: error.name,
         query: error.query,
@@ -193,8 +194,7 @@ handlePostArticles = (req, res) => {
 //                                  Route('/articles/:articleID')                                         //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-app
-  .route("/articles/:articleID")
+app.route("/articles/:articleID")
   .get((req, res) => {
     handleGetArticleById(req, res);
   })
