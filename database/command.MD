@@ -36,3 +36,7 @@ heroku pg:info
 # add DB to project
 heroku addons:create heroku-postgresql:hobby-dev
 
+# 
+git add .
+git commit -m "test"
+git push heroku master

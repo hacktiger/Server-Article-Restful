@@ -86,7 +86,7 @@ app.route("/users/:userID")
   });
 // Helper functions
 handleGetUserById = (req, res) => {
-  db.query("SELECT * from users WHERE id = $1", req.params.userID)
+  db.query("SELECT * from users WHERE id = 3")
     .then((data) => {
       return res
         .status("200")
