@@ -20,5 +20,5 @@ default current_timestamp
 use '' for strings and "" for identifiers in postgres
 #ex: insert into articles(body,"userID") values('test','5')
 
-ALTER TABLE articles ALTER COLUMN "createdAt" SET DEFAULT current_timestamp
-ALTER TABLE articles RENAME COLUMN "userID" TO userid;
+ALTER TABLE articles ALTER COLUMN "updatedAt" SET DEFAULT current_timestamp
+ALTER TABLE articles RENAME COLUMN "createdAt" TO createdat;
