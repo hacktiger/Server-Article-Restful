@@ -331,6 +331,12 @@ getCommentById = (req, res) => {
     });
 };
 putCommentById = (req, res) => {
+  console.log('= null', req.query.userid == null)
+  console.log(req.query.userid != null)
+
+  console.log(req.query.body == null)
+  console.log(req.query.body != null)
+
   db.query("UPDATE comments SET body=$1 WHERE id=$2 ", [ req.query.body,req.params.commentID ])
     .then(() => {
       return res.status("200").json({
