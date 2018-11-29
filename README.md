@@ -15,10 +15,3 @@ or:
 heroku local web 
 
 
-########NOTE
-default current_timestamp
-use '' for strings and "" for identifiers in postgres
-#ex: insert into articles(body,"userID") values('test','5')
-
-ALTER TABLE comments ALTER COLUMN createdat SET DEFAULT current_timestamp
-ALTER TABLE articles RENAME COLUMN "createdAt" TO createdat;

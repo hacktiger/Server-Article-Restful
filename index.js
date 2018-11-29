@@ -331,17 +331,16 @@ getCommentById = (req, res) => {
     });
 };
 putCommentById = (req, res) => {
-  console.log('= null', req.query.userid == null)
-  console.log(req.query.userid != null)
-
-  console.log(req.query.body == null)
-  console.log(req.query.body != null)
-
   db.query("UPDATE comments SET body=$1 WHERE id=$2 ", [ req.query.body,req.params.commentID ])
     .then(() => {
+      const isNull = (req.query.userid == null)? true : false
+      const isNull2 = (req.query.body != null)? true : false
+
       return res.status("200").json({
         code: "200",
-        message: `Successfully updated article ${req.params.commentID}`
+        message: `Successfully updated article ${req.params.commentID}`,
+        isUserIdNull: isNull,
+        aaa: isNull2
       });
     })
     .catch(error => {
