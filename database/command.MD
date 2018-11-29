@@ -36,9 +36,17 @@ heroku pg:info
 # add DB to project
 heroku addons:create heroku-postgresql:hobby-dev
 
-# 
+# fast push 
 git add .
 git commit -m "test"
 git push origin master
 heroku open --app server-article-reader-api
 clear
+
+########NOTE
+default current_timestamp
+use '' for strings and "" for identifiers in postgres
+#ex: insert into articles(body,"userID") values('test','5')
+
+ALTER TABLE comments ALTER COLUMN createdat SET DEFAULT current_timestamp
+ALTER TABLE articles RENAME COLUMN "createdAt" TO createdat;

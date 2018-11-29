@@ -331,26 +331,46 @@ getCommentById = (req, res) => {
     });
 };
 putCommentById = (req, res) => {
-  db.query("UPDATE comments SET body=$1 WHERE id=$2 ", [ req.query.body,req.params.commentID ])
-    .then(() => {
-      const isNull = (req.query.userid == null)? true : false
-      const isNull2 = (req.query.body != null)? true : false
+  db.query("SELECT * FROM comments WHERE id=$1", req.params.commentID)
+    .then((data) => {
+      const userid = (req.query.userid == null)? data[0].userid: req.query.userid;
+      const articleid = (req.query.articleid == null)? data[0].articleid: req.query.articleid ;
+      const body = (req.query.body == null)? data[0].body: req.query.body ;
 
-      return res.status("200").json({
-        code: "200",
-        message: `Successfully updated article ${req.params.commentID}`,
-        isUserIdNull: isNull,
-        aaa: isNull2
-      });
+      return {
+        userid: userid,
+        articleid: articleid,
+        body: body,
+        commentID: req.params.commentID
+      }
     })
-    .catch(error => {
+    .then((obj) => {
+      return db.query("UPDATE comments SET body=$1,userid=$2,articleid=$3 WHERE id=$4 ", [ 
+        obj.body, obj.userid, obj.articleid, obj.commentID
+      ])
+        .then(() => {
+          return res.status("200").json({
+            code: "200",
+            message: `Successfully updated comment`
+          });
+        })
+        .catch((err) => {
+          return res.status("401").json({
+            name: error.name,
+            query: error.query,
+            message: error.message,
+            stack: error.stack.error
+          });          
+        })
+    })
+    .catch((err) => {
       return res.status("401").json({
         name: error.name,
         query: error.query,
         message: error.message,
         stack: error.stack.error
       });
-    });
+    })
 };
 handleDeleteArticleById = (req, res) => {
   db.query("DELETE FROM comments WHERE id = $1", req.params.commentID)
