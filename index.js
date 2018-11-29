@@ -104,10 +104,7 @@ getUserById = (req, res) => {
     });
 };
 handlePutUserById = (req, res) => {
-  db.query("UPDATE users SET email=$1 WHERE id=$2 ", [
-    req.params.email,
-    req.params.userID
-  ])
+  db.query("UPDATE users SET email=$1 WHERE id=$2 ", [ req.query.email,req.params.userID ])
     .then(() => {
       return res.status("200").json({
         code: "200",
@@ -222,10 +219,7 @@ handleGetArticleById = (req, res) => {
     });
 };
 handlePutArticleById = (req, res) => {
-  db.query("UPDATE articles SET body=$1 WHERE id=$2 ", [
-    req.params.body,
-    req.params.articleID
-  ])
+  db.query("UPDATE articles SET body=$1 WHERE id=$2 ", [ req.query.body,req.params.articleID ])
     .then(() => {
       return res.status("200").json({
         code: "200",
@@ -337,7 +331,7 @@ getCommentById = (req, res) => {
     });
 };
 putCommentById = (req, res) => {
-  db.query("UPDATE comments SET body=$1 WHERE id=$2 ", [ req.params.body,req.params.commentID ])
+  db.query("UPDATE comments SET body=$1 WHERE id=$2 ", [ req.query.body,req.params.commentID ])
     .then(() => {
       return res.status("200").json({
         code: "200",

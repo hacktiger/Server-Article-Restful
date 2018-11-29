@@ -41,3 +41,4 @@ git add .
 git commit -m "test"
 git push origin master
 heroku open --app server-article-reader-api
+clear
