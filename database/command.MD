@@ -49,8 +49,15 @@ use '' for strings and "" for identifiers in postgres
 #ex: insert into articles(body,"userID") values('test','5')
 
 ALTER TABLE comments ALTER COLUMN createdat SET DEFAULT current_timestamp
-ALTER TABLE articles RENAME COLUMN "createdAt" TO createdat;
+ALTER TABLE comments RENAME COLUMN "createdAt" TO createdat;
+ALTER TABLE comments RENAME COLUMN "updatedAt" TO updatedat;
 
 
 
-insert into articles(body, userid, catergoryid) values('test',1,1);
+insert into categories(name) values('Politics');
+insert into categories(name) values('Entertainment');
+insert into users(email, password) values('test@gmail.com', '123');
+
+insert into articles(body, userid) values('test',1);
+
+insert into articles_categories(categoryid, articleid) values(1,1);

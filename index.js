@@ -255,6 +255,95 @@ handleDeleteArticleById = (req, res) => {
       });
     });
 };
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//                                      Route('/categories')                                                //
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+app.route("/categories")
+  .get((req, res) => {
+    getCategories(req, res);
+  })
+  .post((req, res) => {
+    postCategories(req, res);
+  })
+getCategories = (req, res) => {
+  db.query("SELECT * FROM categories")
+    .then((data) => {
+      return res.status("200").json({
+        code: "200",
+        message: "Successfully get all comments ",
+        data: data
+      });
+    })
+    .catch(error => {
+      return res.status("401").json({
+        name: error.name,
+        query: error.query,
+        message: error.message,
+        stack: error.stack.error
+      });
+    });    
+}
+postCategories = (req, res) => {
+  db.query("INSERT INTO categories(name) values($1)", [ req.query.name ])
+    .then(data => {
+      return res
+        .status("200")
+        .json({ code: "200", message: "Successfully added categories " });
+    })
+    .catch(error => {
+      return res.status("401").json({
+        name: error.name,
+        query: error.query,
+        message: error.message,
+        stack: error.stack.error
+      });
+    });  
+}
+
+///// get all cat of an article
+app.route("/categories/article/:articlesID")
+  .get((req, res) => {
+    getCategoriesByArticleId(req, res);
+  })
+getCategoriesByArticleId = (req, res) => {
+  db.query(" SELECT categories.name FROM articles_categories LEFT JOIN categories ON  articles_categories.id = categories.id WHERE articles_categories.articleid = $1 ", req.params.articlesID)
+    .then(function(data) {
+      return res
+        .status("200")
+        .json({ code: "200", message: "Success", data: data });
+    })
+    .catch(function(error) {
+      return res.status("401").json({
+        name: error.name,
+        query: error.query,
+        message: error.message,
+        stack: error.stack.error
+      });
+    });
+};
+///// get all article with a category
+app.route("/categories/:categoryID")
+  .get((req, res) => {
+    getCategoriesByArticleId(req, res);
+  })
+getCategoriesByArticleId = (req, res) => {
+  db.query(" SELECT articles.title, articles.body, articles.userid, articles.createdat, articles.updatedat FROM articles_categories LEFT JOIN articles ON  articles_categories.id = articles.id WHERE articles_categories.categoryid = $1 ", req.params.categoryID)
+    .then(function(data) {
+      return res
+        .status("200")
+        .json({ code: "200", message: "Success", data: data });
+    })
+    .catch(function(error) {
+      return res.status("401").json({
+        name: error.name,
+        query: error.query,
+        message: error.message,
+        stack: error.stack.error
+      });
+    });
+};
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                      Route('/comments')                                                //
