@@ -50,3 +50,7 @@ use '' for strings and "" for identifiers in postgres
 
 ALTER TABLE comments ALTER COLUMN createdat SET DEFAULT current_timestamp
 ALTER TABLE articles RENAME COLUMN "createdAt" TO createdat;
+
+
+
+insert into articles(body, userid, catergoryid) values('test',1,1);

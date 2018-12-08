@@ -11,9 +11,12 @@ app.use(parser.json());
 
 // NEED TO FIX :
 /**
- *  1. get users if id not exist now return html doc for some reason but articles dont
- *  2. may need error.stack.error (so each log error is in a line)
- *  3. add so that update params are only optional
+ *  [x] : fixed
+ *  [o] : working on it
+ *  [{anything else}] : {anything else}
+ *  1. [x] get users if id not exist now return html doc for some reason but articles dont
+ *  2. [done for some funcs] may need error.stack.error (so each log error is in a line)
+ *  3. [x] add so that update params are only optional
  */
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
