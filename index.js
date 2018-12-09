@@ -305,7 +305,7 @@ app.route("/categories/:categoryID")
 		getCategoriesById(req, res);
 	})
 
-getCategoriesByArticleId = (req, res) => {
+getCategoriesById = (req, res) => {
 	db.query("SELECT * FROM categories WHERE id = $1", req.params.categoryID)
 	    .then(function(data) {
       return res
@@ -327,7 +327,7 @@ app.route("/categories/article/:articlesID")
     getCategoriesByArticleId(req, res);
   })
 getCategoriesByArticleId = (req, res) => {
-  db.query(" SELECT categories.name FROM articles_categories LEFT JOIN categories ON  articles_categories.id = categories.id WHERE articles_categories.articleid = $1 ", req.params.articlesID)
+  db.query(" SELECT categories.name FROM articles_categories LEFT JOIN categories ON  articles_categories.id = categories.id WHERE articles_categories.articleid = $1", req.params.articlesID)
     .then(function(data) {
       return res
         .status("200")
