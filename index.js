@@ -299,7 +299,28 @@ postCategories = (req, res) => {
       });
     });  
 }
+////////////
+app.route("/categories/:categoryID")
+	.get((req, res) => {
+		getCategoriesById(req, res);
+	})
 
+getCategoriesByArticleId = (req, res) => {
+	db.query("SELECT * FROM categories WHERE id = $1", req.params.categoryID)
+	    .then(function(data) {
+      return res
+        .status("200")
+        .json({ code: "200", message: "Success", data: data });
+    })
+    .catch(function(error) {
+      return res.status("401").json({
+        name: error.name,
+        query: error.query,
+        message: error.message,
+        stack: error.stack.error
+      });
+    });
+}
 ///// get all cat of an article
 app.route("/categories/article/:articlesID")
   .get((req, res) => {
@@ -322,7 +343,7 @@ getCategoriesByArticleId = (req, res) => {
     });
 };
 ///// get all article with a category
-app.route("/categories/:categoryID")
+app.route("/articles/categories/:categoryID")
   .get((req, res) => {
     getCategoriesByArticleId(req, res);
   })
