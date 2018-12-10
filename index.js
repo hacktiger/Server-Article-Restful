@@ -316,7 +316,7 @@ getCategories = (req, res) => {
     .then((data) => {
       return res.status("200").json({
         code: "200",
-        message: "Successfully get all comments ",
+        message: "Successfully get all categories ",
         data: data
       });
     })
@@ -458,6 +458,22 @@ postComments = (req, res) => {
       });
     });
 };
+app.get('/comments/articl/:articleID', function (req, res) => {
+  db.query('SELECT comments.id, comments.body, comments.createdat, users.email FROM comments LEFT JOIN users ON comments.userid = users.id WHERE comments.articleid = $1', req.params.articleID)
+    .then(function(data) {
+      return res
+        .status("200")
+        .json({ code: "200", message: "Success", data: data });
+    })
+    .catch(function(error) {
+      return res.status("401").json({
+        name: error.name,
+        query: error.query,
+        message: error.message,
+        stack: error.stack.error
+      });
+    });  
+});
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                  Route('/comments/:commentID')                                         //
