@@ -3,7 +3,8 @@ const pgp = require("pg-promise")();
 const db = pgp(process.env.DATABASE_URL);
 import { GET_ALL_USER } from './query'
 
-handleGetUsers = (req, res) => {
+
+const handleGetUsers = (req, res) => {
   db.query(GET_ALL_USER)
     .then(data => {
       return res.status("200").json({
@@ -21,7 +22,8 @@ handleGetUsers = (req, res) => {
       });
     });
 };
-handlePostUsers = (req, res) => {
+
+const handlePostUsers = (req, res) => {
   db.query("INSERT INTO users(email, password) values($1,$2)", [
     req.query.email,
     req.query.password
