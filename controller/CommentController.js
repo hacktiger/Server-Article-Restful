@@ -36,7 +36,6 @@ const postComments = (req, res) => {
       });
     });
 };
-
 const getCommentById = (req, res) => {
   db.query(query.GET_COMMENT_BY_ID, req.params.commentID)
     .then(function(data) {
@@ -98,10 +97,44 @@ const deleteCommentById = (req, res) => {
       });
     });
 };
+const getCommentByUserId = (req, res) => {
+  db.query(query.GET_COMMENT_BY_USER_ID, req.params.userID)
+    .then(function(data) {
+      return res
+        .status("200")
+        .json({ code: "200", message: "Success", data: data });
+    })
+    .catch(function(error) {
+      return res.status("401").json({
+        name: error.name,
+        query: error.query,
+        message: error.message,
+        stack: error.stack.error
+      });
+    });
+};
+const getCommentByArticleId = (req, res) => {
+  db.query(query.GET_COMMENT_BY_ARTICLE_ID, req.params.articleID)
+    .then(function(data) {
+      return res
+        .status("200")
+        .json({ code: "200", message: "Success", data: data });
+    })
+    .catch(function(error) {
+      return res.status("401").json({
+        name: error.name,
+        query: error.query,
+        message: error.message,
+        stack: error.stack.error
+      });
+    });
+};
 module.exports = {
   getComments,
   postComments,
   getCommentById,
   putCommentById,
-  deleteCommentById
+  deleteCommentById,
+  getCommentByUserId,
+  getCommentByArticleId
 };
