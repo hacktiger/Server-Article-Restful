@@ -1,10 +1,10 @@
-import { GET_ALL_USER } from './query';
 
+const query = require('./query')
 const pgp = require("pg-promise")();
 const db = pgp(process.env.DATABASE_URL);
 
 const handleGetUsers = (req, res) => {
-  db.query(GET_ALL_USER)
+  db.query(query.GET_ALL_USER)
     .then(data => {
       return res.status("200").json({
         code: "200",
