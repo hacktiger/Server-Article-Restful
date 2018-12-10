@@ -1,5 +1,7 @@
 const ENV = require("./configs/config");
 const UserController = require("./controller/UserController")
+const ArticleController = require("./controller/ArticleController")
+const CommentController = require("./controller/CommentController")
 //
 const parser = require("body-parser");
 const express = require("express");
@@ -26,7 +28,6 @@ app.get("/", (req, res) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                      Route('/users')                                                   //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Route /users
 app.route("/users")
   .get((req, res) => UserController.handleGetUsers(req, res))
   .post((req, res) => UserController.handlePostUsers(req, res))
@@ -40,163 +41,24 @@ app.route("/users/:userID")
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                      Route('/articles')                                                //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
 app.route("/articles")
-  .get((req, res) => {
-    getArticles(req, res);
-  })
-  .post((req, res) => {
-    postArticles(req, res);
-  });
-// Helper functions
-getArticles = (req, res) => {
-  db.query("SELECT * FROM articles")
-    .then(data => {
-      return res.status("200").json({
-        code: "200",
-        message: "Successfully get all articles",
-        data: data
-      });
-    })
-    .catch(error => {
-      return res.status("401").json({
-        name: error.name,
-        query: error.query,
-        message: error.message,
-        stack: error.stack
-      });
-    });
-};
-postArticles = (req, res) => {
-  db.query("INSERT INTO articles(title, body, userid) values($1, $2, $3)", [
-    req.query.title,
-    req.query.body,
-    req.query.userid
-  ])
-    .then(data => {
-      return res
-        .status("200")
-        .json({ code: "200", message: "Successfully added article " });
-    })
-    .catch(error => {
-      return res.status("401").json({
-        name: error.name,
-        query: error.query,
-        message: error.message,
-        stack: error.stack
-      });
-    });
-};
+  .get((req, res) => ArticleController.getArticles(req, res))
+  .post((req, res) => ArticleController.postArticles(req, res))
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                  Route('/articles/:articleID')                                         //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
 app.route("/articles/:articleID")
-  .get((req, res) => {
-    handleGetArticleById(req, res);
-  })
-  .put((req, res) => {
-    handlePutArticleById(req, res);
-  })
-  .delete((req, res) => {
-    handleDeleteArticleById(req, res);
-  });
-// Helper functions
-handleGetArticleById = (req, res) => {
-  db.query("SELECT * from articles WHERE id = $1", req.params.articleID)
-    .then(function(data) {
-      return res
-        .status("200")
-        .json({ code: "200", message: "Success", data: data });
-    })
-    .catch(function(error) {
-      return res.status("401").json({
-        name: error.name,
-        query: error.query,
-        message: error.message,
-        stack: error.stack
-      });
-    });
-};
-handlePutArticleById = (req, res) => {
-  db.query("UPDATE articles SET body=$1 WHERE id=$2 ", [ req.query.body,req.params.articleID ])
-    .then(() => {
-      return res.status("200").json({
-        code: "200",
-        message: `Successfully updated article ${req.params.articleID}`
-      });
-    })
-    .catch(error => {
-      return res.status("401").json({
-        name: error.name,
-        query: error.query,
-        message: error.message,
-        stack: error.stack
-      });
-    });
-};
-handleDeleteArticleById = (req, res) => {
-  db.query("DELETE FROM articles WHERE id = $1", req.params.articleID)
-    .then(data => {
-      return res.status("200").json({
-        code: "200",
-        message: `Successfully delete article`
-      });
-    })
-    .catch(error => {
-      return res.status("401").json({
-        name: error.name,
-        query: error.query,
-        message: error.message,
-        stack: error.stack
-      });
-    });
-};
+  .get((req, res) => ArticleController.handleGetArticleById(req, res))
+  .put((req, res) => ArticleController.handlePutArticleById(req, res))
+  .delete((req, res) => ArticleController.handleDeleteArticleById(req, res))
 /////////////////////////////////////////////////
 // get all info from article by id
 //////////////////////////////////////////////////
-app.get('/articles/:articleID/info', function (req, res) {
-  db.query("SELECT articles.id, articles.title, articles.body, articles.createdat, articles.updatedat, users.email FROM articles LEFT JOIN users ON articles.userid = users.id WHERE articles.id = $1", req.params.articleID)
-    .then(data => {
-      return res.status("200").json({
-        code: "200",
-        message: "Successfully get all articles",
-        data: data
-      });
-    })
-    .catch(error => {
-      return res.status("401").json({
-        name: error.name,
-        query: error.query,
-        message: error.message,
-        stack: error.stack
-      });
-    });
-});
-
+app.get('/articles/:articleID/info', (req, res) => ArticleController.getAllArticleInfoById(req, res));
 /////////////////////////////////////////////////
 // get articles pagination
 //////////////////////////////////////////////////
-app.get('/articles/page/:pageNo', function (req, res) {
-  let offset = (req.params.pageNo - 1) * 5
-  db.query("SELECT articles.id, articles.title, articles.body, articles.createdat, articles.updatedat, users.email FROM articles LEFT JOIN users ON articles.userid = users.id ORDER BY articles.id OFFSET $1 LIMIT 5", offset)
-    .then(data => {
-      return res.status("200").json({
-        code: "200",
-        message: "Successfully get all articles",
-        data: data
-      });
-    })
-    .catch(error => {
-      return res.status("401").json({
-        name: error.name,
-        query: error.query,
-        message: error.message,
-        stack: error.stack
-      });
-    });
-});
-
+app.get('/articles/page/:pageNo', (req, res) => ArticleController.getArticlesByPage(req, res));
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                      Route('/categories')                                                //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -307,145 +169,20 @@ getCategoriesByArticleId = (req, res) => {
     });
 };
 
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                      Route('/comments')                                                //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
 app.route("/comments")
-  .get((req, res) => {
-    getComments(req, res);
-  })
-  .post((req, res) => {
-    postComments(req, res);
-  });
-getComments =(req, res) => {
-  db.query("SELECT * FROM comments")
-    .then((data) => {
-      return res.status("200").json({
-        code: "200",
-        message: "Successfully get all comments ",
-        data: data
-      });
-    })
-    .catch(error => {
-      return res.status("401").json({
-        name: error.name,
-        query: error.query,
-        message: error.message,
-        stack: error.stack.error
-      });
-    });
-};
-postComments = (req, res) => {
-  db.query("INSERT INTO comments(body, userid, articleid ) values($1,$2,$3)", [ req.query.body, req.query.userid, req.query.articleid ])
-    .then(data => {
-      return res
-        .status("200")
-        .json({ code: "200", message: "Successfully added comment " });
-    })
-    .catch(error => {
-      return res.status("401").json({
-        name: error.name,
-        query: error.query,
-        message: error.message,
-        stack: error.stack.error
-      });
-    });
-};
-
+  .get((req, res) => CommentController.getComments(req, res))
+  .post((req, res) => CommentController.postComments(req, res))
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                  Route('/comments/:commentID')                                         //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 app.route("/comments/:commentID")
-  .get((req, res) => {
-    getCommentById(req, res);
-  })
-  .put((req, res) => {
-    putCommentById(req, res);
-  })
-  .delete((req, res) => {
-    deleteCommentById(req, res);
-  });
-// Helper functions
-getCommentById = (req, res) => {
-  db.query("SELECT * from comments WHERE id = $1", req.params.commentID)
-    .then(function(data) {
-      return res
-        .status("200")
-        .json({ code: "200", message: "Success", data: data });
-    })
-    .catch(function(error) {
-      return res.status("401").json({
-        name: error.name,
-        query: error.query,
-        message: error.message,
-        stack: error.stack.error
-      });
-    });
-};
-putCommentById = (req, res) => {
-  db.query("SELECT * FROM comments WHERE id=$1", req.params.commentID)
-    .then((data) => {
-      const userid = (req.query.userid == null)? data[0].userid: req.query.userid;
-      const articleid = (req.query.articleid == null)? data[0].articleid: req.query.articleid ;
-      const body = (req.query.body == null)? data[0].body: req.query.body ;
-
-      return {
-        userid: userid,
-        articleid: articleid,
-        body: body,
-        commentID: req.params.commentID
-      }
-    })
-    .then((obj) => {
-      return db.query("UPDATE comments SET body=$1,userid=$2,articleid=$3 WHERE id=$4 ", [ 
-        obj.body, obj.userid, obj.articleid, obj.commentID
-      ])
-        .then(() => {
-          return res.status("200").json({
-            code: "200",
-            message: `Successfully updated comment`
-          });
-        })
-        .catch((err) => {
-          return res.status("401").json({
-            name: error.name,
-            query: error.query,
-            message: error.message,
-            stack: error.stack.error
-          });          
-        })
-    })
-    .catch((err) => {
-      return res.status("401").json({
-        name: error.name,
-        query: error.query,
-        message: error.message,
-        stack: error.stack.error
-      });
-    })
-};
-handleDeleteArticleById = (req, res) => {
-  db.query("DELETE FROM comments WHERE id = $1", req.params.commentID)
-    .then(data => {
-      return res.status("200").json({
-        code: "200",
-        message: `Successfully delete comment`
-      });
-    })
-    .catch(error => {
-      return res.status("401").json({
-        name: error.name,
-        query: error.query,
-        message: error.message,
-        stack: error.stack.error
-      });
-    });
-};
-
+  .get((req, res) => CommentController.getCommentById(req, res))
+  .put((req, res) => CommentController.putCommentById(req, res))
+  .delete((req, res) => CommentController.deleteCommentById(req, res))
 /////////////////////////////////////////// Get all comments by userID
 app.route('/comments/users/:userID')
   .get((req, res) => {
