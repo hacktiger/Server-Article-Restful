@@ -1,5 +1,5 @@
 const ENV = require("./configs/config");
-const CONTROLLER = require("./controller/controller")
+const UserController = require("./controller/UserController")
 //
 const parser = require("body-parser");
 const express = require("express");
@@ -31,77 +31,15 @@ app.get("/", (req, res) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Route /users
 app.route("/users")
-  .get((req, res) => CONTROLLER.handleGetUsers(req, res))
-  .post((req, res) => CONTROLLER.handlePostUsers(req, res))
-
-
+  .get((req, res) => UserController.handleGetUsers(req, res))
+  .post((req, res) => UserController.handlePostUsers(req, res))
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                     Route('/users/:userID')                                            //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Route /users/userID
 app.route("/users/:userID")
-  .get((req, res) => {
-    getUserById(req, res);
-  })
-  .put((req, res) => {
-    handlePutUserById(req, res);
-  })
-  .delete((req, res) => {
-    handleDeleteUserById(req, res);
-  });
-// Helper functions
-getUserById = (req, res) => {
-  // console.log(req.params.userID)
-  db.query("SELECT * from users WHERE id = $1", req.params.userID)
-    .then(function(data) {
-      return res
-        .status("200")
-        .json({ code: "200", message: "Success", data: data });
-    })
-    .catch(function(error) {
-      return res.status("401").json({
-        name: error.name,
-        query: error.query,
-        message: error.message,
-        stack: error.stack
-      });
-    });
-};
-handlePutUserById = (req, res) => {
-  db.query("UPDATE users SET email=$1 WHERE id=$2 ", [ req.query.email,req.params.userID ])
-    .then(() => {
-      return res.status("200").json({
-        code: "200",
-        message: `Successfully updated user ${req.params.userID}`
-      });
-    })
-    .catch((error) => {
-      return res.status("401").json({
-        name: error.name,
-        query: error.query,
-        message: error.message,
-        stack: error.stack
-      });
-    });
-};
-handleDeleteUserById = (req, res) => {
-  db.query("DELETE FROM users WHERE id = $1", req.params.userID)
-    .then((data) => {
-      return res.status("200").json({
-        code: "200",
-        message: `Successfully delete user`
-      });
-    })
-    .catch((error) => {
-      return res.status("401").json({
-        name: error.name,
-        query: error.query,
-        message: error.message,
-        stack: error.stack
-      });
-    });
-};
-
+  .get((req, res) => UserController.getUserById(req, res))
+  .put((req, res) => UserController.handlePutUserById(req, res))
+  .delete((req, res) => UserController.handleDeleteUserById(req, res))
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                      Route('/articles')                                                //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
