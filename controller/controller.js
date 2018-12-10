@@ -1,8 +1,7 @@
+import { GET_ALL_USER } from './query';
 
 const pgp = require("pg-promise")();
 const db = pgp(process.env.DATABASE_URL);
-import { GET_ALL_USER } from './query'
-
 
 const handleGetUsers = (req, res) => {
   db.query(GET_ALL_USER)
