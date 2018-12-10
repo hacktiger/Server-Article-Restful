@@ -173,7 +173,7 @@ getArticles = (req, res) => {
 };
 postArticles = (req, res) => {
   db.query("INSERT INTO articles(title, body, userid) values($1, $2, $3)", [
-    req.query.title
+    req.query.title,
     req.query.body,
     req.query.userid
   ])
