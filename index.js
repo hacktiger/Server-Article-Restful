@@ -260,7 +260,7 @@ handleDeleteArticleById = (req, res) => {
 // get all info from article by id
 //////////////////////////////////////////////////
 app.get('/articles/:articleID/info', function (req, res) {
-  db.query("SELECT articles.id, articles.title, articles.body, articles.createdat, articles.updatedat, users.email FROM articles LEFT JOIN users ON articles.userid = users.id WHERE articles.id = $1", req.params.articleID)
+  db.query("SELECT articles.id, articles.title, articles.body, articles.createdat, articles.updatedat, users.id, users.email FROM articles LEFT JOIN users ON articles.userid = users.id WHERE articles.id = $1", req.params.articleID)
     .then(data => {
       return res.status("200").json({
         code: "200",
