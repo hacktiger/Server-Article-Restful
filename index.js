@@ -147,13 +147,13 @@ handleDeleteUserById = (req, res) => {
 //
 app.route("/articles")
   .get((req, res) => {
-    handleGetArticles(req, res);
+    getArticles(req, res);
   })
   .post((req, res) => {
-    handlePostArticles(req, res);
+    postArticles(req, res);
   });
 // Helper functions
-handleGetArticles = (req, res) => {
+getArticles = (req, res) => {
   db.query("SELECT * FROM articles")
     .then(data => {
       return res.status("200").json({
@@ -171,8 +171,9 @@ handleGetArticles = (req, res) => {
       });
     });
 };
-handlePostArticles = (req, res) => {
-  db.query("INSERT INTO articles(body, userid) values($1,$2)", [
+postArticles = (req, res) => {
+  db.query("INSERT INTO articles(title, body, userid) values($1, $2, $3)", [
+    req.query.title
     req.query.body,
     req.query.userid
   ])
@@ -255,6 +256,51 @@ handleDeleteArticleById = (req, res) => {
       });
     });
 };
+/////////////////////////////////////////////////
+// get all info from article by id
+//////////////////////////////////////////////////
+app.get('/articles/:articleID/info', function (req, res) {
+  db.query("SELECT articles.id, articles.title, articles.body, articles.createdat, articles.updatedat, users.email FROM articles LEFT JOIN users ON articles.userid = users.id WHERE articles.id = $1", req.params.articleID)
+    .then(data => {
+      return res.status("200").json({
+        code: "200",
+        message: "Successfully get all articles",
+        data: data
+      });
+    })
+    .catch(error => {
+      return res.status("401").json({
+        name: error.name,
+        query: error.query,
+        message: error.message,
+        stack: error.stack
+      });
+    });
+});
+
+/////////////////////////////////////////////////
+// get articles pagination
+//////////////////////////////////////////////////
+app.get('/articles/page/:pageNo', function (req, res) {
+  let offset = (req.params.pageNo - 1) * 5
+  db.query("SELECT articles.id, articles.title, articles.body, articles.createdat, articles.updatedat, users.email FROM articles LEFT JOIN users ON articles.userid = users.id ORDER BY articles.id OFFSET $1 LIMIT 5", offset)
+    .then(data => {
+      return res.status("200").json({
+        code: "200",
+        message: "Successfully get all articles",
+        data: data
+      });
+    })
+    .catch(error => {
+      return res.status("401").json({
+        name: error.name,
+        query: error.query,
+        message: error.message,
+        stack: error.stack
+      });
+    });
+});
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                      Route('/categories')                                                //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -326,8 +372,9 @@ app.route("/categories/article/:articlesID")
   .get((req, res) => {
     getCategoriesByArticleId(req, res);
   })
+  <!-- TODO: something is wrong here there is no parameter $1-->
 getCategoriesByArticleId = (req, res) => {
-  db.query(" SELECT categories.name FROM articles_categories LEFT JOIN categories ON  articles_categories.id = categories.id WHERE articles_categories.articleid = $1", req.params.articlesID)
+  db.query("SELECT categories.name FROM articles_categories LEFT JOIN categories ON  articles_categories.id = categories.id WHERE articles_categories.articleid = $1", req.params.articlesID)
     .then(function(data) {
       return res
         .status("200")
