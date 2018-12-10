@@ -4,9 +4,6 @@ const UserController = require("./controller/UserController")
 const parser = require("body-parser");
 const express = require("express");
 const app = express();
-//
-const pgp = require("pg-promise")();
-const db = pgp(process.env.DATABASE_URL);
 // use
 app.use(parser.json());
 

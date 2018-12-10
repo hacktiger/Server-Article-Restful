@@ -1,5 +1,7 @@
 
 const query = require('./query')
+const config = require('../configs/config')
+const db = config.db
 
 const handleGetUsers = (req, res) => {
   db.query(query.GET_ALL_USER)
