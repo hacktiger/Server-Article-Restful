@@ -1,4 +1,5 @@
 const ENV = require("./configs/config");
+const CONTROLLER = require("./controller/controller")
 //
 const parser = require("body-parser");
 const express = require("express");
@@ -30,50 +31,9 @@ app.get("/", (req, res) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Route /users
 app.route("/users")
-  .get((req, res) => {
-    handleGetUsers(req, res);
-  })
-  .post((req, res) => {
-    handlePostUsers(req, res);
-  });
-// Helper functions
-handleGetUsers = (req, res) => {
-  db.query("SELECT * FROM users")
-    .then(data => {
-      return res.status("200").json({
-        code: "200",
-        message: "Successfully get all users ",
-        data: data
-      });
-    })
-    .catch(error => {
-      return res.status("401").json({
-        name: error.name,
-        query: error.query,
-        message: error.message,
-        stack: error.stack
-      });
-    });
-};
-handlePostUsers = (req, res) => {
-  db.query("INSERT INTO users(email, password) values($1,$2)", [
-    req.query.email,
-    req.query.password
-  ])
-    .then(data => {
-      return res
-        .status("200")
-        .json({ code: "200", message: "Successfully added user " });
-    })
-    .catch(error => {
-      return res.status("401").json({
-        name: error.name,
-        query: error.query,
-        message: error.message,
-        stack: error.stack
-      });
-    });
-};
+  .get((req, res) => CONTROLLER.handleGetUsers(req, res))
+  .post((req, res) => CONTROLLER.handlePostUsers(req, res))
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                     Route('/users/:userID')                                            //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -260,7 +220,7 @@ handleDeleteArticleById = (req, res) => {
 // get all info from article by id
 //////////////////////////////////////////////////
 app.get('/articles/:articleID/info', function (req, res) {
-  db.query("SELECT articles.id, articles.title, articles.body, articles.createdat, articles.updatedat, users.id, users.email FROM articles LEFT JOIN users ON articles.userid = users.id WHERE articles.id = $1", req.params.articleID)
+  db.query("SELECT articles.id, articles.title, articles.body, articles.createdat, articles.updatedat, users.email FROM articles LEFT JOIN users ON articles.userid = users.id WHERE articles.id = $1", req.params.articleID)
     .then(data => {
       return res.status("200").json({
         code: "200",
